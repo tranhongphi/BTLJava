@@ -168,33 +168,41 @@ public class ChangePassword extends javax.swing.JFrame {
 
             if (txtmanv.getText().equals("") || txtmkcu.getText().equals("") || txtmkmoi.getText().equals("") || txtxacnhanmk.getText().equals("")) {
                 JOptionPane.showMessageDialog(rootPane, "Bạn phải nhập đủ các ô!!!");
-                
+
             } else {
-                int dem = 0;
-                String sqlc = "select* from nhanvien";
-                ResultSet rs = stmt.executeQuery(sqlc);
-                while (rs.next()) {
-                    if (txtmkcu.getText().equals(rs.getString(3))) {
-                        if (txtmkmoi.getText().equals(txtxacnhanmk.getText())) {
-                            String sql = "update nhanvien set Pass='" + txtmkmoi.getText() + "' where MaNV='" + txtmanv.getText() + "'";
-                            int number = stmt.executeUpdate(sql);
-                            if (number == 0) {
-                                System.out.println("changepass false!!!");
-                            } else {
-                                System.out.println("changepass seccusfully!!!");
-                                new Login().setVisible(true);
-                                this.setVisible(false);
+                String sqlktra = "select* from nhanvien";
+                ResultSet rsktra = stmt.executeQuery(sqlktra);
+                while (rsktra.next()) {
+                    if (txtmanv.getText().equals(rsktra.getString(1))) {
+                        int dem = 0;
+                        String sqlc = "select* from nhanvien";
+                        ResultSet rs = stmt.executeQuery(sqlc);
+                        while (rs.next()) {
+                            if (txtmkcu.getText().equals(rs.getString(3))) {
+                                if (txtmkmoi.getText().equals(txtxacnhanmk.getText())) {
+                                    String sql = "update nhanvien set Pass='" + txtmkmoi.getText() + "' where MaNV='" + txtmanv.getText() + "'";
+                                    int number = stmt.executeUpdate(sql);
+                                    if (number == 0) {
+                                        System.out.println("changepass false!!!");
+                                    } else {
+                                        System.out.println("changepass seccusfully!!!");
+                                        new Login().setVisible(true);
+                                        this.setVisible(false);
+                                    }
+
+                                } else {
+                                    JOptionPane.showMessageDialog(rootPane, "mật khẩu mới và xác nhận mật khẩu khác nhau!!!");
+
+                                }
+                                return;
                             }
-                            
                         }
-                        else{
-                            JOptionPane.showMessageDialog(rootPane, "mật khẩu mới và xác nhận mật khẩu khác nhau!!!");
-                            
-                        }
+                        JOptionPane.showMessageDialog(rootPane, "mật khẩu cũ nhập không đúng!!!");
                         return;
+
                     }
                 }
-                JOptionPane.showMessageDialog(rootPane, "mật khẩu cũ nhập không đúng!!!");
+                JOptionPane.showMessageDialog(rootPane, "không có mã nhân viên này!!!");
 
             }
 
