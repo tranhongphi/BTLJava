@@ -2965,73 +2965,83 @@ public class GiaoDienChinh extends javax.swing.JFrame {
         txtMaGD.setText(null);
     }
     private void btnThemSPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemSPActionPerformed
-        Connection con = null;
-        Statement stmt = null;
+        if (txtMaSP.getText().equals("") || txtDonGia.getText().equals("") || txtTenSP.getText().equals("") || txtLoai.getText().equals("") || txtXuatXu.getText().equals("") || txtSL.getText().equals("")) {
+            JOptionPane.showMessageDialog(rootPane, "Bạn không được để trống thông tin sản phẩm!!");
+        } else {
+            Connection con = null;
+            Statement stmt = null;
 
-        String maSP = txtMaSP.getText();
-        String tenSP = txtTenSP.getText();
-        String Loai = txtLoai.getText();
-        String xuatXu = txtXuatXu.getText();
-        int soLuong = Integer.parseInt(txtSL.getText());
-        int donGia = Integer.parseInt(txtDonGia.getText());
+            String maSP = txtMaSP.getText();
+            String tenSP = txtTenSP.getText();
+            String Loai = txtLoai.getText();
+            String xuatXu = txtXuatXu.getText();
+            int soLuong = Integer.parseInt(txtSL.getText());
+            int donGia = Integer.parseInt(txtDonGia.getText());
 
-        try {
-            Class.forName(JDBC_DRIVER);
-            System.out.println("da ket noi CSDL");
-            con = DriverManager.getConnection(DB_URL, USER, PASS);
-            System.out.println("tao cau lenh truy van sql...");
-            stmt = con.createStatement();
+            try {
 
-            String sqlMaSP = "select MaSP from sanpham where MaSP='" + maSP + "'";
-            ResultSet rs1 = stmt.executeQuery(sqlMaSP);
-            while (rs1.next()) {
-                JOptionPane.showMessageDialog(rootPane, "San Pham nay da ton tai!!");
-                return;
-            }
+                Class.forName(JDBC_DRIVER);
+                System.out.println("da ket noi CSDL");
+                con = DriverManager.getConnection(DB_URL, USER, PASS);
+                System.out.println("tao cau lenh truy van sql...");
+                stmt = con.createStatement();
 
-            String sqlThemSP = "insert into sanpham value('" + maSP + "','" + tenSP + "','" + Loai + "','" + xuatXu + "','" + soLuong + "','" + donGia + "');";
-            int numberrows = stmt.executeUpdate(sqlThemSP);
+                String sqlMaSP = "select MaSP from sanpham where MaSP='" + maSP + "'";
+                ResultSet rs1 = stmt.executeQuery(sqlMaSP);
+                while (rs1.next()) {
+                    JOptionPane.showMessageDialog(rootPane, "San Pham nay da ton tai!!");
+                    return;
+                }
 
-            if (numberrows == 0) {
-                System.out.println("insertion falsed");
-            } else {
-                System.out.println("insertion succesfully");
+                String sqlThemSP = "insert into sanpham value('" + maSP + "','" + tenSP + "','" + Loai + "','" + xuatXu + "','" + soLuong + "','" + donGia + "');";
+                int numberrows = stmt.executeUpdate(sqlThemSP);
+
+                if (numberrows == 0) {
+                    System.out.println("insertion falsed");
+                } else {
+                    System.out.println("insertion succesfully");
+                }
+                int sohang = tableModelSP.getRowCount() - 1;
+                for (int i = sohang; i >= 0; i--) {
+                    tableModelSP.removeRow(i);
+                }
+                int sohangHT = tableModelHangTon.getRowCount() - 1;
+                for (int i = sohang; i >= 0; i--) {
+                    tableModelHangTon.removeRow(i);
+                }
+                String sql = "select * from sanpham";
+                ResultSet rs = stmt.executeQuery(sql);
+                while (rs.next()) {
+                    String[] rows = new String[6];
+                    rows[0] = rs.getString(1);
+                    rows[1] = rs.getString(2);
+                    rows[2] = rs.getString(3);
+                    rows[3] = rs.getString(4);
+                    rows[4] = rs.getString(5);
+                    rows[5] = rs.getString(6);
+                    tableModelSP.addRow(rows);
+                    tableModelHangTon.addRow(rows);
+                }
+                JOptionPane.showMessageDialog(rootPane, "Them thanh cong!");
+                rs.close();
+                XoaTextfieldSP();
+                con.close();
+                stmt.close();
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(GiaoDienChinh.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException ex) {
+                Logger.getLogger(GiaoDienChinh.class.getName()).log(Level.SEVERE, null, ex);
             }
-            int sohang = tableModelSP.getRowCount() - 1;
-            for (int i = sohang; i >= 0; i--) {
-                tableModelSP.removeRow(i);
-            }
-            int sohangHT = tableModelHangTon.getRowCount() - 1;
-            for (int i = sohang; i >= 0; i--) {
-                tableModelHangTon.removeRow(i);
-            }
-            String sql = "select * from sanpham";
-            ResultSet rs = stmt.executeQuery(sql);
-            while (rs.next()) {
-                String[] rows = new String[6];
-                rows[0] = rs.getString(1);
-                rows[1] = rs.getString(2);
-                rows[2] = rs.getString(3);
-                rows[3] = rs.getString(4);
-                rows[4] = rs.getString(5);
-                rows[5] = rs.getString(6);
-                tableModelSP.addRow(rows);
-                tableModelHangTon.addRow(rows);
-            }
-            JOptionPane.showMessageDialog(rootPane, "Them thanh cong!");
-            rs.close();
-            XoaTextfieldSP();
-            con.close();
-            stmt.close();
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(GiaoDienChinh.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(GiaoDienChinh.class.getName()).log(Level.SEVERE, null, ex);
         }
+
     }//GEN-LAST:event_btnThemSPActionPerformed
 
     private void btnSuaSPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuaSPActionPerformed
         // TODO add your handling code here:
+        if (txtMaSP.getText().equals("") || txtDonGia.getText().equals("") || txtTenSP.getText().equals("") || txtLoai.getText().equals("") || txtXuatXu.getText().equals("") || txtSL.getText().equals("")) {
+            JOptionPane.showMessageDialog(rootPane, "Bạn không được để trống thông tin sản phẩm!!");
+            return ;
+        }
         Connection con = null;
         Statement stmt = null;
         String maSP = txtMaSP.getText();
@@ -3096,6 +3106,10 @@ public class GiaoDienChinh extends javax.swing.JFrame {
 
     private void btnXoaSPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXoaSPActionPerformed
         // TODO add your handling code here:
+        if (txtMaSP.getText().equals("") || txtDonGia.getText().equals("") || txtTenSP.getText().equals("") || txtLoai.getText().equals("") || txtXuatXu.getText().equals("") || txtSL.getText().equals("")) {
+            JOptionPane.showMessageDialog(rootPane, "Bạn không được để trống thông tin sản phẩm!!");
+            return ;
+        }
         Connection con = null;
         Statement stmt = null;
 
@@ -3139,6 +3153,10 @@ public class GiaoDienChinh extends javax.swing.JFrame {
 
     private void btnTimSPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTimSPActionPerformed
         // TODO add your handling code here:
+        if (txtMaSP.getText().equals("") || txtDonGia.getText().equals("") || txtTenSP.getText().equals("") || txtLoai.getText().equals("") || txtXuatXu.getText().equals("") || txtSL.getText().equals("")) {
+            JOptionPane.showMessageDialog(rootPane, "Vui lòng nhập mã sp!!");
+            return ;
+        }
         Connection con = null;
         Statement stmt = null;
 
@@ -3184,6 +3202,10 @@ public class GiaoDienChinh extends javax.swing.JFrame {
 
     private void btnNhapSPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNhapSPActionPerformed
         // TODO add your handling code here:
+        if (txtMaSP.getText().equals("") || txtDonGia.getText().equals("") || txtTenSP.getText().equals("") || txtLoai.getText().equals("") || txtXuatXu.getText().equals("") || txtSL.getText().equals("")) {
+            JOptionPane.showMessageDialog(rootPane, "Bạn không được để trống thông tin sản phẩm , mã hđ , mã giao dịch!!");
+            return ;
+        }
         Connection con = null;
         Statement stmt = null;
         String maSP = txtMaSP.getText();
@@ -3328,6 +3350,10 @@ public class GiaoDienChinh extends javax.swing.JFrame {
 
     private void btnBanSPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBanSPActionPerformed
         // TODO add your handling code here:
+        if (txtMaSP.getText().equals("") || txtDonGia.getText().equals("") || txtTenSP.getText().equals("") || txtLoai.getText().equals("") || txtXuatXu.getText().equals("") || txtSL.getText().equals("")) {
+            JOptionPane.showMessageDialog(rootPane, "Bạn không được để trống thông tin sản phẩm , mã hđ , mã giao dịch!!");
+            return ;
+        }
         Connection con = null;
         Statement stmt = null;
         String maSP = txtMaSP.getText();
@@ -3490,6 +3516,10 @@ public class GiaoDienChinh extends javax.swing.JFrame {
 
     private void btnKiemTraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnKiemTraActionPerformed
         // TODO add your handling code here:
+        if (txtMaSP_HangTon.getText().equals("")) {
+            JOptionPane.showMessageDialog(rootPane, "Vui lòng nhập mã hàng");
+            return ;
+        }
         Connection con = null;
         Statement stmt = null;
 
